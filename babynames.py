@@ -10,6 +10,8 @@
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
 
+__author__ = "ElizabethS5"
+
 import sys
 import re
 import argparse
@@ -45,8 +47,30 @@ def extract_names(filename):
     followed by the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
-    # +++your code here+++
-    return
+    text = get_text(filename)
+    year = re.search(r'Popularity\sin\s(\d{4})', text).group(1)
+    rank_names_tups = re.findall(
+        r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', text)
+    names_dict = create_names_dict(rank_names_tups)
+    names_list = sorted([tup[0] + ' ' + tup[1]
+                         for tup in names_dict.items()])
+    names_list.insert(0, year)
+    return names_list
+
+
+def get_text(filename):
+    with open(filename, 'r') as f:
+        return f.read()
+
+
+def create_names_dict(tuples):
+    names_dict = {}
+    for tup in tuples:
+        if tup[1] not in names_dict:
+            names_dict[tup[1]] = tup[0]
+        if tup[2] not in names_dict:
+            names_dict[tup[2]] = tup[0]
+    return names_dict
 
 
 def create_parser():
@@ -58,6 +82,12 @@ def create_parser():
     # It will also expand wildcards just like the shell, e.g. 'baby*.html' will work.
     parser.add_argument('files', help='filename(s) to parse', nargs='+')
     return parser
+
+
+def create_summary_file(file, text):
+    file_name = file + '.summary'
+    with open(file_name, 'w') as f:
+        f.write(text)
 
 
 def main():
@@ -75,6 +105,12 @@ def main():
 
     # +++your code here+++
     # For each filename, get the names, then either print the text output
+    for file in file_list:
+        text = '\n'.join(extract_names(file)) + '\n'
+        if create_summary:
+            create_summary_file(file, text)
+        else:
+            print(text)
     # or write it to a summary file
 
 
