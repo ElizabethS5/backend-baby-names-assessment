@@ -52,8 +52,8 @@ def extract_names(filename):
     rank_names_tups = re.findall(
         r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', text)
     names_dict = create_names_dict(rank_names_tups)
-    names_list = sorted([tup[0] + ' ' + tup[1]
-                         for tup in names_dict.items()])
+    names_list = sorted([name + ' ' + rank
+                         for name, rank in names_dict.items()])
     names_list.insert(0, year)
     return names_list
 
@@ -65,11 +65,11 @@ def get_text(filename):
 
 def create_names_dict(tuples):
     names_dict = {}
-    for tup in tuples:
-        if tup[1] not in names_dict:
-            names_dict[tup[1]] = tup[0]
-        if tup[2] not in names_dict:
-            names_dict[tup[2]] = tup[0]
+    for rank, boy, girl in tuples:
+        if boy not in names_dict:
+            names_dict[boy] = rank
+        if girl not in names_dict:
+            names_dict[girl] = rank
     return names_dict
 
 
